@@ -33,7 +33,7 @@ namespace shape
             DoubleBuffered = true;
 
 
-         //   obstacles.Add(new Rectangle(80, 20, 200, 300, Color.Blue, Brushes.Blue));
+            obstacles.Add(new Rectangle(80, 20, 200, 300, Color.Blue, Brushes.Blue));
             obstacles.Add(new Rectangle(80, 20, 200, 200, Color.Blue, Brushes.Blue));
 
 
