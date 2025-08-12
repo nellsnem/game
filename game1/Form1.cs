@@ -15,6 +15,7 @@ namespace game1
 {
     public partial class Form1 : Form
     {
+        ygbuybbnjk;
         Graphics g;
         Point click;
         int x = 5;
