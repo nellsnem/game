@@ -12,68 +12,82 @@ interface Drawable
     void Fill(Graphics g);
 
     RectangleF GetBounds();
-
-    void Key();
 }
 
+enum ShapeTypes
+{
+    CircleType,
+    RectangleType,
+    LineType,
+}
 
 abstract class Shape
-{
-    abstract public String Output();
+{    abstract public ShapeTypes GetShapeType();
 }
-class Line : Shape, Drawable
+
+
+class Line : Shape, Drawable 
 {
     
     public float x1, y1, x2, y2;
     Color colorLine;
     public float thicknes;
-
+    public float angle;
+    private float length;
+    public float SpeedX, SpeedY;
     public Line()
     {
     }
-    public Line(float x1, float y1, float x2, float y2, float thicknes, Color colorLine)
+    public Line(float x1, float y1, float length, float angle, float thicknes, Color colorLine)
     {
         this.x1 = x1;
         this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+        this.length = length;
+        this.angle = angle;
+        
         this.thicknes = thicknes;
         this.colorLine = colorLine;
+     
     }
+  
     public void Draw(Graphics g)
     {
+
+        // Фіксована  точка
+        x2 = x1 + length * (float)Math.Cos(angle - 2 * Math.PI);
+        y2 = y1 - length * (float)Math.Sin(angle - 2 * Math.PI);
+
+
         g.DrawLine(new Pen(colorLine, thicknes), x1, y1, x2, y2);
+
     }
 
     public void Fill(Graphics g)
     {
-        Draw(g);
-    }
 
+        Draw(g);
+ 
+    }
+     
     public RectangleF GetBounds()
     {
-        
-        return new RectangleF((float)x1, (float)y1, (float)Math.Abs(x2 - x1), (float)Math.Abs(y2 - y1));
+        RectangleF rectF;
+        if (x1 < x2)
+            rectF = new RectangleF((float)x1, (float)y1, (float)Math.Abs(x2 - x1), (float)Math.Abs(y2 - y1));
+        else
+            rectF = new RectangleF((float)x2, (float)y2, (float)Math.Abs(x2 - x1), (float)Math.Abs(y2 - y1));
+        return rectF; 
     }
 
-    public void Key()
+    public override ShapeTypes GetShapeType()
     {
-        throw new NotImplementedException();
+        return ShapeTypes.LineType;
     }
-
-    public override String Output()
-    {
-        return "Line";
-    }
-
-    
-
-
 }
 class Circle : Shape, Drawable
 {
-    public double radius;
-    public double xc, yc;
+    public float radius;
+    public float xc, yc;
     public Color colorCircle;
     public Brush brushCircle;
 
@@ -81,7 +95,7 @@ class Circle : Shape, Drawable
     {
 
     }
-    public Circle(double r, double xc, double yc, Color color, Brush brush)
+    public Circle(float r, float xc, float yc, Color color, Brush brush)
     {
         radius = r;
         this.xc = xc;
@@ -89,11 +103,6 @@ class Circle : Shape, Drawable
         colorCircle = color;
         brushCircle = brush;
 
-    }
-
-    public override String Output()
-    {
-        return $"Circle {radius}";
     }
 
     public void Draw(Graphics g)
@@ -115,35 +124,31 @@ class Circle : Shape, Drawable
     (float)(2 * radius));
     }
 
-    public void Key()
+    public override ShapeTypes GetShapeType()
     {
-         
+        return ShapeTypes.CircleType;
     }
+
 }
 
 class Rectangle : Shape, Drawable
 {
-    public double a, b;
-    public double xc, yc;
+    public float a, b;
+    public float xc, yc;
     public Color colorRectangle;
     public Brush brushRectangle;
 
 
-    public Rectangle(double aside, double bside, double xc, double yc, Color color, Brush brush)
+    public Rectangle(float a, float b, float xc, float yc, Color color, Brush brush)
     {
-        a = aside;
-        b = bside;
+        this.a = a;
+        this.b = b;
         this.xc = xc;
         this.yc = yc;
         colorRectangle = color;
         brushRectangle = brush;
     }
    
-    public override String Output()
-    {
-        return $"rectangle {a} {b}";
-    }
-
     public void Draw(Graphics g)
     {
         g.DrawRectangle(new Pen(colorRectangle), (float)(xc - a / 2), (float)(yc - b / 2), (float)(a), (float)(b));
@@ -158,17 +163,11 @@ class Rectangle : Shape, Drawable
         return new RectangleF((float)(xc- a/2), (float)(yc - b/2), (float)a, (float)b);
     }
 
-    public void Key()
+    public override ShapeTypes GetShapeType()
     {
+        return ShapeTypes.RectangleType;
+    }
 
-    }
 }
-class Constructor
-{
-    public void Show(Shape shape)
-    {
-        shape.Output();
-        
-    }
-}
+
 

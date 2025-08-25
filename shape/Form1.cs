@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.LinkLabel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace shape
 {
@@ -18,8 +19,13 @@ namespace shape
         Line line = new Line();
         Graphics g;
         List<Drawable> obstacles = new List<Drawable>();
+        
         private Line lineright;
         private Line lineleft;
+        bool wPressed = false;
+        bool upPressed = false;
+        private int score = 0; // бали
+        private int lives = 3; // кількість м’ячиків
 
         public Form1()
         {
@@ -33,22 +39,30 @@ namespace shape
             DoubleBuffered = true;
 
 
-            obstacles.Add(new Rectangle(80, 20, 200, 300, Color.Blue, Brushes.Blue));
-            obstacles.Add(new Rectangle(80, 20, 200, 200, Color.Blue, Brushes.Blue));
+            //кнопки в разі поразки
+            label1.Visible = false;
+            restart.Visible = false;
+            KeyPreview = true;
+
+            timer1.Enabled = false;
+
+            // обєкти
+            obstacles.Add(new Rectangle(100, 20, 50, 300, Color.Blue, Brushes.Purple));
+            obstacles.Add(new Rectangle(100, 20, 330, 250, Color.Blue, Brushes.GreenYellow));
+
+ 
+            obstacles.Add(new Circle(30, 200, 50, Color.Blue, Brushes.Red));
+            obstacles.Add(new Circle(30, 300, 150, Color.Blue, Brushes.Green));
+            obstacles.Add(new Circle(30, 50, 150, Color.Blue, Brushes.Blue));
 
 
-
-            obstacles.Add(new Circle(30, 200, 120, Color.Blue, Brushes.MediumPurple));
-            obstacles.Add(new Circle(30, 300, 200, Color.Blue, Brushes.MediumPurple));
-
-            
 
 
             // Керована лінія
-            lineleft = new Line(30, 400, 150, 400, 6, Color.Black);
+            lineleft = new Line(10, 400, 120, 0, 6, Color.Black);
             obstacles.Add(lineleft);
 
-            lineright = new Line(200, 400, 320, 400, 6, Color.Black);
+            lineright = new Line(355, 400,120, 3.14f, 6,  Color.Black);
             obstacles.Add(lineright);
         }
 
@@ -63,9 +77,9 @@ namespace shape
             foreach (var shape in obstacles)
             {
                 shape.Fill(g);
+                
             }
-
-            //мячик
+             //мячик
             ball.Draw(e.Graphics);
 
         }
@@ -80,24 +94,50 @@ namespace shape
 
             // Перевірка — чи виходить фігура за межі форми
 
-            if (ball.x + radius > this.ClientSize.Width)
+            // справа
+            if (ball.x + ball.radius > this.ClientSize.Width)
             {
                 ball.SpeedX = -ball.SpeedX;
+                ball.x = this.ClientSize.Width - ball.radius;
             }
 
-            if (ball.x < 0)
+            // зліва
+            if (ball.x - ball.radius < 0)
             {
                 ball.SpeedX = -ball.SpeedX;
-                ball.x = 0;
+                ball.x = ball.radius; // враховуємо радіус
             }
 
-            if (ball.y > this.ClientSize.Height)
+            // знизу
+            if (ball.y + ball.radius > this.ClientSize.Height)
             {
-                //ball.SpeedY = -ball.SpeedY;
-                timer1.Stop(); // Зупиняє оновлення руху
-                MessageBox.Show("М'ячик вийшов за межі екрана. Гра зупинена.", "Кінець гри");
-                return;
+                lives--; // віднімаємо життя
+                label3.Text = "Ball: " + lives; // оновлюємо напис у твоєму PictureBox (або Label)
+
+                if (lives > 0)
+                {
+                    ball.Reset(); // скидаємо м’ячик у початкову позицію
+                }
+                else
+                {
+                    timer1.Stop();
+                    MessageBox.Show("Усі м’ячики закінчились. Гра завершена.", "Кінець гри");
+
+                    label1.Visible = true;
+                    restart.Visible = true;
+                }
+
+               
             }
+
+            // зверху
+            if (ball.y - ball.radius < 0)
+            {
+                ball.SpeedY = -ball.SpeedY;
+                ball.y = ball.radius; // враховуємо радіус
+            }
+
+
 
             if (ball.y < 0)
             {
@@ -107,48 +147,91 @@ namespace shape
 
             // Перевірка зіткнення з фігурами
 
-
+             
             foreach (var shape in obstacles)
             {
                 if (ball.IntersectsWith(shape))
                 {
-                    MessageBox.Show(((Shape)shape).Output(), "ttttt");
-                    
-                    
-                    break; // якщо зіткнувся — виходимо з циклу
+                    if (!(shape is Line))
+                    {
+                        score++;
+                        countscore.Text = "Очки: " + score;
+
+                        break;
+                    }
+
+
+                    // щоб не нарахувало відразу з кількома фігурами
+                    if (shape is Circle)
+                    {
+                        score +=2;
+                        countscore.Text = "Очки: " + score;
+
+                        break;
+                    }
                 }
+                
+                
             }
+            
 
             this.Invalidate(); // перемалювати
-        }
 
+            // Рух лапки
+            float speed = 0.05f; // швидкість руху лапки, можна підбирати для плавності
+
+            // Ліва лапка
+            if (wPressed && lineleft.angle < Math.PI / 4.0f)
+                lineleft.angle += speed;
+            else if (!wPressed && lineleft.angle > 0)
+                lineleft.angle -= speed; // плавне повернення
+
+            // Права лапка
+            if (upPressed && lineright.angle > 3 * Math.PI / 4.0f)
+                lineright.angle -= speed;
+            else if (!upPressed && lineright.angle < 3.14f)
+                lineright.angle += speed; // плавне повернення
+
+            Invalidate(); // перемалювати форму
+        }
+        
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.Up:
-                    lineleft.y2 -= 10; //ліво
-                    break;
-                case Keys.Down:
-                    lineleft.y2 += 10; // ліво
-                    break;
 
-                case Keys.W:
-                    lineright.y1 -= 10; // право
-                    break;
-                case Keys.S:
-                    lineright.y1 += 10; // право
-                    break;
-            }
-            Invalidate();
-        } 
+            if (e.KeyCode == Keys.W) wPressed = true;
+            if (e.KeyCode == Keys.Up) upPressed = true;
+
+        }
+         private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.W) wPressed = false;
+            if (e.KeyCode == Keys.Up) upPressed = false;
+
+         }
+        // перезапуск
+        private void restart_Click(object sender, EventArgs e)
+        {
+            ball.Reset();
+            label1.Visible = false;
+            restart.Visible = false;
+            timer1.Enabled = true;
+            score = 0;
+            countscore.Text = "Очки: " + 0;
+
+            label3.Text = "BALL: " + lives;
+        }
+        // старт
+        private void label2_Click(object sender, EventArgs e)
+        {
+            label2.Visible = false; // сховати стартовий екран
+            timer1.Enabled = true;      // запустити гру
+
+        }
+
+        
     }
 }
-// обмеження для підняття лінії 
 
-// нормальне відбиття від фігур і іній
-
-// товщина лінії
-
-// 
-
+//пролітає біля кола близько і бере куча очок
+// діаграми класів
