@@ -1,0 +1,10 @@
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\bin\Debug\game1.exe.config
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\bin\Debug\game1.exe
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\bin\Debug\game1.pdb
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\obj\Debug\game1.csproj.AssemblyReference.cache
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\obj\Debug\game1.Form1.resources
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\obj\Debug\game1.Properties.Resources.resources
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\obj\Debug\game1.csproj.GenerateResource.cache
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\obj\Debug\game1.csproj.CoreCompileInputs.cache
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\obj\Debug\game1.exe
+C:\Users\Cніжана\OneDrive\Рабочий стол\C#\game1\game1\obj\Debug\game1.pdb
