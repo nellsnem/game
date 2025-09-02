@@ -16,21 +16,22 @@ namespace shape
         public float x, y, radius;
         public float SpeedX, SpeedY;
         public float score;
-        
-
+         
         public ball()
         {
             Reset();
         }
-
+        
         public void Reset()
         {
-            x = 50;
-            y = 50;
-            radius = 20;
-            SpeedX = 10;
-            SpeedY = 1;
+             
+            x = 420;
+            y = 400;
+            radius = 10;
+            SpeedX = 0;
+            SpeedY = 0;
             score = 0;
+           
         }
         public void Move()
         {
@@ -60,6 +61,16 @@ namespace shape
                 {
                     case ShapeTypes.CircleType:
                         (SpeedX, SpeedY) = ReflectFromFixedBall(x, y, radius, SpeedX, SpeedY, (shape as Circle).xc, (shape as Circle).yc, (shape as Circle).radius);
+                        // Виштовхуємо кулю
+                        float dxC = x - (shape as Circle).xc;
+                        float dyC = y - (shape as Circle).yc;
+                        float distC = (float)Math.Sqrt(dxC * dxC + dyC * dyC);
+                        float overlapC = (radius + (shape as Circle).radius) - distC;
+                        if (overlapC > 0)
+                        {
+                            x += dxC / distC * overlapC;
+                            y += dyC / distC * overlapC;
+                        }
                         break;
                     case ShapeTypes.RectangleType:
                         Rectangle rect = shape as Rectangle;
@@ -69,30 +80,57 @@ namespace shape
                                             rect.yc - rect.b / 2,  // Y верхньої сторони прямокутника
                                             rect.a,                // ширина
                                             rect.b                 // висота
-                                            ); 
+                                            );
+                        // Виштовхуємо кулю
+                        float nearestX = Math.Max(rect.xc - rect.a / 2, Math.Min(x, rect.xc + rect.a / 2));
+                        float nearestY = Math.Max(rect.yc - rect.b / 2, Math.Min(y, rect.yc + rect.b / 2));
+                        float dxR = x - nearestX;
+                        float dyR = y - nearestY;
+                        float distR = (float)Math.Sqrt(dxR * dxR + dyR * dyR);
+                        if (distR != 0)
+                        {
+                            float overlapR = radius - distR;
+                            if (overlapR > 0)
+                            {
+                                x += dxR / distR * overlapR;
+                                y += dyR / distR * overlapR;
+                            }
+                        }
                         break;
                     case ShapeTypes.LineType:
                         Line line = shape as Line;
-                        // швидкість рухомого кінця (якщо ти її десь зберігаєш)
-                        float vxLine = line.SpeedX; // або 0, якщо немає руху
-                        float vyLine = line.SpeedY; // або 0
-
-                        (SpeedX, SpeedY) = ReflectFromMovingLine(
-                            x, y, radius,            // центр і радіус кулі
-                            SpeedX, SpeedY,          // швидкість кулі
-                            line.x1, line.y1,        // фіксований кінець лінії
-                            line.x2, line.y2,        // рухомий кінець лінії
-                            vxLine, vyLine           // швидкість рухомого кінця
-                        );
+                        if (line.SpeedX != 0 || line.SpeedY != 0)
+                        {
+                            (SpeedX, SpeedY) = ReflectFromMovingLine(
+                                x, y, radius,
+                                SpeedX, SpeedY,
+                                line.x1, line.y1,
+                                line.x2, line.y2,
+                                line.SpeedX, line.SpeedY
+                            );
+                        }
+                        else
+                        {
+                            (SpeedX, SpeedY) = ReflectFromFixedLine(
+                                x, y, radius,
+                                SpeedX, SpeedY,
+                                line.x1, line.y1,
+                                line.x2, line.y2
+                            );
+                        }
                         break;
 
+
                 }
-            
+
             }
                
 
             return isIntersect;
         }
+
+        
+
         // відбиття від кулі
         public (float vx, float vy) ReflectFromFixedBall(
        float x1, float y1, float r1, float vx, float vy,
@@ -114,7 +152,10 @@ namespace shape
 
             float vx_new = vt_x + vn_new * nx;
             float vy_new = vt_y + vn_new * ny;
+            vx_new *= 1.1f;
+            vy_new *= 1.1f;
 
+            
             return (vx_new, vy_new);
         }
         // відбиття від прямокутника
@@ -155,7 +196,8 @@ namespace shape
             // Нова швидкість
             float vx_new = vt_x + vn_new * nx;
             float vy_new = vt_y + vn_new * ny;
-
+            vx_new /= 1.1f;
+            vy_new /= 1.1f;
             return (vx_new, vy_new);
         }
         // відбиття від лінії
@@ -207,6 +249,51 @@ namespace shape
 
             return (vx_new, vy_new);
         }
+        public (float vx, float vy) ReflectFromFixedLine(
+    float cx, float cy, float r, float vx, float vy,   // куля
+    float x1, float y1, float x2, float y2             // відрізок
+)
+        {
+            // Вектор відрізка
+            float lx = x2 - x1;
+            float ly = y2 - y1;
+            float lenSq = lx * lx + ly * ly;
+            if (lenSq == 0) return (vx, vy); // вироджена лінія
 
+            // Проекція центра кулі на відрізок
+            float t = ((cx - x1) * lx + (cy - y1) * ly) / lenSq;
+            t = Math.Max(0, Math.Min(1, t));
+
+            // Найближча точка на відрізку
+            float px = x1 + t * lx;
+            float py = y1 + t * ly;
+
+            // Вектор від точки до центра кулі
+            float dx = cx - px;
+            float dy = cy - py;
+            float distSq = dx * dx + dy * dy;
+
+            // Нема контакту
+            if (distSq > r * r) return (vx, vy);
+
+            // Нормаль (від лінії до центра кулі)
+            float dist = (float)Math.Sqrt(distSq);
+            if (dist == 0) { dx = 0; dy = -1; dist = 1; }  // довільна нормаль, якщо центр рівно на лінії
+            float nx = dx / dist;
+            float ny = dy / dist;
+
+            // Відбиваємо ТІЛЬКИ якщо рух йде у напрямку нормалі (в бік лінії)
+            float vn = vx * nx + vy * ny; // скалярна проекція швидкості на нормаль
+            if (vn >= 0) return (vx, vy); // уже віддаляється — не чіпаємо
+
+            // Розклад швидкості і інверсія нормальної складової
+            float vt_x = vx - vn * nx;
+            float vt_y = vy - vn * ny;
+            float vx_new = vt_x - vn * nx; // (еквівалентно: vt + (-vn)*n)
+            float vy_new = vt_y - vn * ny;
+
+            return (vx_new, vy_new);
+        }
+ 
     }
 }

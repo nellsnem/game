@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Shape" Collapsed="true">
-    <Position X="5.75" Y="0.5" Width="1.5" />
+    <Position X="6.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
       <FileName>Shape.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Line">
-    <Position X="3.5" Y="1.75" Width="1.5" />
+    <Position X="2" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAAAAEAAAgAAgAAAEAAAAABAwAACACAAQAAAABCAAA=</HashCode>
       <FileName>Shape.cs</FileName>
@@ -16,7 +16,7 @@
     <Lollipop Position="0.175" />
   </Class>
   <Class Name="Circle">
-    <Position X="5.75" Y="1.75" Width="1.5" />
+    <Position X="6.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>YAAAAAAACAgAAgAAAAIAAAAAAAAACAAAAAAAAgACAAA=</HashCode>
       <FileName>Shape.cs</FileName>
@@ -24,7 +24,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rectangle">
-    <Position X="8" Y="1.75" Width="1.5" />
+    <Position X="8.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>YAAAAAAAAAgAAgIAAAAAAAAAAgAACAAgAQAAAAACAAA=</HashCode>
       <FileName>Shape.cs</FileName>
@@ -32,28 +32,36 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="shape.ball">
-    <Position X="1" Y="1" Width="1.5" />
+    <Position X="4.25" Y="1.5" Width="1.5" />
+    <InheritanceLine Type="Circle" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.5" Y="3.5" />
+        <Point X="6.125" Y="3.5" />
+        <Point X="6.125" Y="3.33" />
+        <Point X="5.75" Y="3.33" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAACIgABwAAAAAIIAABAAAQAAAAAABgAAAAAAI=</HashCode>
+      <HashCode>BAAAAAAACIgABwAAAAAIIAABAAAQAAAAAABgAAAAAAI=</HashCode>
       <FileName>ball.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="shape.Form1">
-    <Position X="12.75" Y="0.5" Width="1.5" />
+    <Position X="13.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAUAgBQEADBAAFAAAACIIABCAAIAIAAYAAAAAAIAAAA=</HashCode>
+      <HashCode>ABUAgBQEADRAAFQAAACIIABCAAIAIAAYAABAAAIAAIA=</HashCode>
       <FileName>Form1.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Drawable">
-    <Position X="10.5" Y="0.5" Width="1.5" />
+    <Position X="11.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAgAAgAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
       <FileName>Shape.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="ShapeTypes">
-    <Position X="10.5" Y="2.25" Width="1.5" />
+    <Position X="11.25" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAIAAAAAAAAAAICAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Shape.cs</FileName>

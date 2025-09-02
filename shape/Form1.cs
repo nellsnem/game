@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +23,19 @@ namespace shape
         
         private Line lineright;
         private Line lineleft;
+        private Rectangle linestart;
+
+        // щоб мячик починав свій рух
+        bool isLaunched = false;   // чи м'яч вже запущений
+        bool isCharging = false;   // чи затиснутий пробіл
+        float chargePower = 0;     // сила запуску
+        float maxPower = 10;       // максимум швидкості
+
+
+
+
+       
+
         bool wPressed = false;
         bool upPressed = false;
         private int score = 0; // бали
@@ -34,7 +48,7 @@ namespace shape
             //клавіатура
             KeyPreview = true;
 
-            timer1.Interval = 40;
+            timer1.Interval = 20;
             timer1.Start();
             DoubleBuffered = true;
 
@@ -48,16 +62,24 @@ namespace shape
 
             // обєкти
             obstacles.Add(new Rectangle(100, 20, 50, 300, Color.Blue, Brushes.Purple));
-            obstacles.Add(new Rectangle(100, 20, 330, 250, Color.Blue, Brushes.GreenYellow));
-
- 
+            obstacles.Add(new Rectangle(100, 20, 310, 250, Color.Blue, Brushes.GreenYellow));
+             
             obstacles.Add(new Circle(30, 200, 50, Color.Blue, Brushes.Red));
             obstacles.Add(new Circle(30, 300, 150, Color.Blue, Brushes.Green));
             obstacles.Add(new Circle(30, 50, 150, Color.Blue, Brushes.Blue));
 
 
 
+            // ФІКСОВАНІ ЛІНІЇ
+            
+            linestart = new Rectangle(5, 150, 380, 350, Color.Black, Brushes.Purple);
+            obstacles.Add(linestart);
+            obstacles.Add(new Line(380, 420, 75, 0, 6, Color.Black));
 
+            //для відбиття
+            obstacles.Add(new Line(400, 0, 80, 7 * 3.14f / 4, 6, Color.Black));
+
+            
             // Керована лінія
             lineleft = new Line(10, 400, 120, 0, 6, Color.Black);
             obstacles.Add(lineleft);
@@ -116,6 +138,7 @@ namespace shape
 
                 if (lives > 0)
                 {
+                    isLaunched = false;
                     ball.Reset(); // скидаємо м’ячик у початкову позицію
                 }
                 else
@@ -152,28 +175,48 @@ namespace shape
             {
                 if (ball.IntersectsWith(shape))
                 {
-                    if (!(shape is Line))
+                    if (shape is Line || shape == linestart)
+                    {
+                        break;
+                    }
+                  
+                    
+                    if (shape is Circle)
+                    {
+                        score +=2;
+                        countscore.Text = "Очки: " + score;
+
+                       
+                         
+                        break;
+                    }
+                    if (shape is Rectangle rect)
                     {
                         score++;
                         countscore.Text = "Очки: " + score;
 
                         break;
                     }
-
-
-                    // щоб не нарахувало відразу з кількома фігурами
-                    if (shape is Circle)
-                    {
-                        score +=2;
-                        countscore.Text = "Очки: " + score;
-
-                        break;
-                    }
-                }
-                
-                
+                }  
             }
             
+
+
+            // щоб мячик рухався
+            if (!isLaunched && isCharging)
+            {
+                // поки тримаємо пробіл — росте сила удару
+                chargePower += 0.3f;
+                if (chargePower > maxPower) chargePower = maxPower;
+            }
+
+            if (isLaunched)
+            {
+                // рухаємо м’ячик
+                ball.x += ball.SpeedX;
+                ball.y += ball.SpeedY;
+            }
+
 
             this.Invalidate(); // перемалювати
 
@@ -201,6 +244,14 @@ namespace shape
             if (e.KeyCode == Keys.W) wPressed = true;
             if (e.KeyCode == Keys.Up) upPressed = true;
 
+
+            //щоб мячик починав свій рух
+            if (e.KeyCode == Keys.Space && !isLaunched)
+            {
+                isCharging = true;   // починаємо заряджати силу
+                 
+            }
+
         }
          private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
@@ -208,30 +259,57 @@ namespace shape
             if (e.KeyCode == Keys.W) wPressed = false;
             if (e.KeyCode == Keys.Up) upPressed = false;
 
-         }
+            //щоб мячик починав свій рух
+            if (e.KeyCode == Keys.Space && !isLaunched)
+            {
+                isCharging = false;
+                isLaunched = true;
+
+                if (chargePower < 1) chargePower = 1; // мінімальна сила// запускаємо м’ячик вгору з накопиченою швидкістю
+                { 
+                ball.SpeedY = -chargePower;
+                ball.SpeedX = 0;
+                chargePower = 0;
+                }
+            }
+
+        }
         // перезапуск
         private void restart_Click(object sender, EventArgs e)
         {
             ball.Reset();
+            ball.SpeedX = 0;
+            ball.SpeedY = 0;
+
             label1.Visible = false;
             restart.Visible = false;
             timer1.Enabled = true;
+
             score = 0;
             countscore.Text = "Очки: " + 0;
 
-            label3.Text = "BALL: " + lives;
+            lives = 3;
+            label3.Text = "Ball: " + lives;
+
+            isLaunched = false;   // щоб м’яч чекав пробілу
+            isCharging = false;
+            chargePower = 0;
+
+            this.Focus();     
+            this.Select();  
         }
         // старт
         private void label2_Click(object sender, EventArgs e)
         {
             label2.Visible = false; // сховати стартовий екран
             timer1.Enabled = true;      // запустити гру
-
         }
-
-        
     }
 }
 
-//пролітає біля кола близько і бере куча очок
-// діаграми класів
+//мячик не реагує на наступний раз на пробіл
+// НЕ БАЧЕ ОДНУ ЛІНІЮ
+//зробити обмеження для загальної швидкості бо мячик застряє у фігурах
+
+
+// прямокутник сповілбнює

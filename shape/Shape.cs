@@ -71,11 +71,22 @@ class Line : Shape, Drawable
      
     public RectangleF GetBounds()
     {
+        float width = (float)Math.Abs(x2 - x1);
+        float height = (float)Math.Abs(y2 - y1);
+        if ( width == 0 )
+        {
+            width = thicknes;
+        }
+        if (height ==0)
+        {
+            height = thicknes;
+        }
+        
         RectangleF rectF;
         if (x1 < x2)
-            rectF = new RectangleF((float)x1, (float)y1, (float)Math.Abs(x2 - x1), (float)Math.Abs(y2 - y1));
+            rectF = new RectangleF((float)x1, (float)y1, width, height);
         else
-            rectF = new RectangleF((float)x2, (float)y2, (float)Math.Abs(x2 - x1), (float)Math.Abs(y2 - y1));
+            rectF = new RectangleF((float)x2, (float)y2, width, height);
         return rectF; 
     }
 
@@ -169,5 +180,3 @@ class Rectangle : Shape, Drawable
     }
 
 }
-
-
