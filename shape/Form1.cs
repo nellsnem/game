@@ -29,7 +29,7 @@ namespace shape
         bool isLaunched = false;   // чи м'яч вже запущений
         bool isCharging = false;   // чи затиснутий пробіл
         float chargePower = 0;     // сила запуску
-        float maxPower = 10;       // максимум швидкості
+        float maxPower = 6;       // максимум швидкості
 
 
 
@@ -48,7 +48,7 @@ namespace shape
             //клавіатура
             KeyPreview = true;
 
-            timer1.Interval = 20;
+            timer1.Interval = 10;
             timer1.Start();
             DoubleBuffered = true;
 
@@ -61,12 +61,12 @@ namespace shape
             timer1.Enabled = false;
 
             // обєкти
-            obstacles.Add(new Rectangle(100, 20, 50, 300, Color.Blue, Brushes.Purple));
-            obstacles.Add(new Rectangle(100, 20, 310, 250, Color.Blue, Brushes.GreenYellow));
+            obstacles.Add(new Rectangle(20, 100, 50, 150, Color.Blue, Brushes.Purple));
+            obstacles.Add(new Rectangle(20, 100, 360, 250, Color.Blue, Brushes.GreenYellow));
              
-            obstacles.Add(new Circle(30, 200, 50, Color.Blue, Brushes.Red));
+            obstacles.Add(new Circle(30, 150, 50, Color.Blue, Brushes.Red));
             obstacles.Add(new Circle(30, 300, 150, Color.Blue, Brushes.Green));
-            obstacles.Add(new Circle(30, 50, 150, Color.Blue, Brushes.Blue));
+            obstacles.Add(new Circle(30, 50, 300, Color.Blue, Brushes.Blue));
 
 
 
@@ -105,6 +105,8 @@ namespace shape
             ball.Draw(e.Graphics);
 
         }
+
+
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -150,7 +152,6 @@ namespace shape
                     restart.Visible = true;
                 }
 
-               
             }
 
             // зверху
@@ -175,19 +176,21 @@ namespace shape
             {
                 if (ball.IntersectsWith(shape))
                 {
-                    if (shape is Line || shape == linestart)
+                    if (shape == linestart)
                     {
-                        break;
+                        continue; // просто ігнорувати зіткнення
                     }
-                  
-                    
+
+                    if (shape is Line)
+                    {
+                        break; // для інших ліній
+                    }
+
+
                     if (shape is Circle)
                     {
                         score +=2;
                         countscore.Text = "Очки: " + score;
-
-                       
-                         
                         break;
                     }
                     if (shape is Rectangle rect)
@@ -206,7 +209,7 @@ namespace shape
             if (!isLaunched && isCharging)
             {
                 // поки тримаємо пробіл — росте сила удару
-                chargePower += 0.3f;
+                chargePower += 0.1f;
                 if (chargePower > maxPower) chargePower = maxPower;
             }
 
@@ -307,9 +310,3 @@ namespace shape
     }
 }
 
-//мячик не реагує на наступний раз на пробіл
-// НЕ БАЧЕ ОДНУ ЛІНІЮ
-//зробити обмеження для загальної швидкості бо мячик застряє у фігурах
-
-
-// прямокутник сповілбнює

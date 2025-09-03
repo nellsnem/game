@@ -119,17 +119,11 @@ namespace shape
                             );
                         }
                         break;
-
-
                 }
-
             }
                
-
             return isIntersect;
         }
-
-        
 
         // відбиття від кулі
         public (float vx, float vy) ReflectFromFixedBall(
@@ -152,10 +146,10 @@ namespace shape
 
             float vx_new = vt_x + vn_new * nx;
             float vy_new = vt_y + vn_new * ny;
-            vx_new *= 1.1f;
-            vy_new *= 1.1f;
-
+            vx_new *= 1f;
+            vy_new *= 1f;
             
+
             return (vx_new, vy_new);
         }
         // відбиття від прямокутника
@@ -196,8 +190,8 @@ namespace shape
             // Нова швидкість
             float vx_new = vt_x + vn_new * nx;
             float vy_new = vt_y + vn_new * ny;
-            vx_new /= 1.1f;
-            vy_new /= 1.1f;
+            //vx_new /= 1.1f;
+            //vy_new /= 1.1f;
             return (vx_new, vy_new);
         }
         // відбиття від лінії
