@@ -29,7 +29,7 @@ namespace shape
         bool isLaunched = false;   // чи м'яч вже запущений
         bool isCharging = false;   // чи затиснутий пробіл
         float chargePower = 0;     // сила запуску
-        float maxPower = 6;       // максимум швидкості
+        float maxPower = 4;       // максимум швидкості
 
 
 
@@ -86,6 +86,17 @@ namespace shape
 
             lineright = new Line(355, 400,120, 3.14f, 6,  Color.Black);
             obstacles.Add(lineright);
+
+
+            
+             
+        }
+        // ЗБІЛЬШЕННЯ ЩВИДКОСТІ
+        private async void BoostBallSpeed(float multiplier, int durationMs)
+        {
+            ball.speedMultiplier = multiplier;   // збільшуємо швидкість
+            await Task.Delay(durationMs);        // чекаємо заданий час
+            ball.speedMultiplier = ball.baseSpeedMultiplier; // повертаємо назад
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -191,6 +202,7 @@ namespace shape
                     {
                         score +=2;
                         countscore.Text = "Очки: " + score;
+                        BoostBallSpeed(1.0f, 2000); // +50% швидкості на 2 секунди
                         break;
                     }
                     if (shape is Rectangle rect)
@@ -210,7 +222,11 @@ namespace shape
             {
                 // поки тримаємо пробіл — росте сила удару
                 chargePower += 0.1f;
-                if (chargePower > maxPower) chargePower = maxPower;
+                if (chargePower > maxPower)
+                {
+                    chargePower = maxPower;
+                }
+                    
             }
 
             if (isLaunched)

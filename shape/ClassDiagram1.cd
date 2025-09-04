@@ -37,19 +37,19 @@
       <Path>
         <Point X="6.5" Y="3.5" />
         <Point X="6.125" Y="3.5" />
-        <Point X="6.125" Y="3.33" />
-        <Point X="5.75" Y="3.33" />
+        <Point X="6.125" Y="3.491" />
+        <Point X="5.75" Y="3.491" />
       </Path>
     </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>BAAAAAAACIgABwAAAAAIIAABAAAQAAAAAABgAAAAAAI=</HashCode>
+      <HashCode>BAAAAAgACIgABwAAAAAIIAABBAAQAAAAAABgAAAAAAI=</HashCode>
       <FileName>ball.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="shape.Form1">
     <Position X="13.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABUAgBQEADRAAFQAAACIIABCAAIAIAAYAABAAAIAAIA=</HashCode>
+      <HashCode>ABUAgBQEADRAAFCAAACIIABCBAIAIAAYAAAAAAIAAIA=</HashCode>
       <FileName>Form1.cs</FileName>
     </TypeIdentifier>
   </Class>

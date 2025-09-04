@@ -16,7 +16,10 @@ namespace shape
         public float x, y, radius;
         public float SpeedX, SpeedY;
         public float score;
-         
+        public float baseSpeedMultiplier = 1f; // базова швидкість
+        public float speedMultiplier = 1f;     // активний множник швидкості
+
+
         public ball()
         {
             Reset();
@@ -35,8 +38,8 @@ namespace shape
         }
         public void Move()
         {
-            x += SpeedX;
-            y += SpeedY;
+            x += SpeedX * speedMultiplier;
+            y += SpeedY * speedMultiplier;
         }
 
         public new RectangleF GetBounds()
